@@ -31,18 +31,41 @@ public class Grid : MonoBehaviour
 	private Player player;
 	private Tile[,] tiles;
 
-	public void MoveTo( Position targetPosition )
-	{
-		foreach( Tile tile in tiles )
-			tile.Highlight( false );
+    public void MoveTo(Position targetPosition)
+    {
+        if (!player.Ismoving)
+            {
+            foreach (Tile tile in tiles)
+                tile.Highlight(false);
 
-		List<Position> path = PathFinder.FindPath( tiles, player.position, targetPosition , PathFinder.Method.First);
+            if (tiles[targetPosition.x, targetPosition.y].isWall)
+            {
+                Debug.Log("é uma parede");
+                if (!tiles[targetPosition.x - 1, targetPosition.y].isWall)
+                {
+                    targetPosition = new Grid.Position { x = targetPosition.x - 1, y = targetPosition.y };
+                }
+                else if (!tiles[targetPosition.x + 1, targetPosition.y].isWall)
+                {
+                    targetPosition = new Grid.Position { x = targetPosition.x + 1, y = targetPosition.y };
+                }
+                else if (!tiles[targetPosition.x, targetPosition.y + 1].isWall)
+                {
+                    targetPosition = new Grid.Position { x = targetPosition.x, y = targetPosition.y + 1 };
+                }
+                else if (!tiles[targetPosition.x, targetPosition.y - 1].isWall)
+                {
+                    targetPosition = new Grid.Position { x = targetPosition.x, y = targetPosition.y - 1 };
+                }
+            }
+            List<Position> path = PathFinder.FindPath(tiles, player.position, targetPosition, PathFinder.Method.Second);
 
-		foreach( Position position in path )
-			tiles[position.x, position.y].Highlight( true );
-		
-		player.SetPosition( targetPosition, tileSpacing );
-	}
+            foreach (Position position in path)
+                tiles[position.x, position.y].Highlight(true);
+
+            StartCoroutine(player.Walk(path, tileSpacing));
+        }
+    }
 
 	private void Start()
 	{

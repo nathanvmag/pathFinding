@@ -1,0 +1,25 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+public class Player : MonoBehaviour
+{
+	[System.NonSerialized]
+	public Grid.Position position;
+
+	public void SetPosition( Grid.Position position, Vector2 spacing )
+	{
+		this.position = position;
+		transform.localPosition = position.ToWorldPosition( spacing, 1.0f );
+	}
+   public  IEnumerator Walk(List<Grid.Position>positionsToWalk,Vector2 spacing)
+    {
+        for (int i =0;i<positionsToWalk.Count;i++)
+        {
+            while (Vector3.Distance(position.ToWorldPosition(spacing, 0f), positionsToWalk[i].ToWorldPosition(spacing, 0f)) < 0.1f)
+            {
+
+            }
+        }
+        
+    }
+}

@@ -37,31 +37,117 @@ public static class PathFinder
         }
         else if (method == Method.Second)
         {
-            Search(fromPosition, toPosition,tiles.GetLength(0),tiles.GetLength(1));
+            return Search(fromPosition, toPosition, tiles);
 
         }
 
         return path;
     }
 
-        public static void Search(Grid.Position myPosition, Grid.Position positionToFind,int width,int heigth)
-        {
-        Debug.Log(myPosition.x + " " + myPosition.y);
-       
-                if (myPosition.x  == positionToFind.x && myPosition.y == positionToFind.y)
+    public static List<Grid.Position> Search(Grid.Position myPosition, Grid.Position positionToFind, Tile[,] tiles)
+    {
+        int width = tiles.GetLength(0);
+        int heigth = tiles.GetLength(1);
+        Queue<Grid.Position> fila = new Queue<Grid.Position>();
+        List<Grid.Position> path = new List<Grid.Position>();
+        fila.Enqueue(myPosition);
+        HashSet<Grid.Position> PlacesVisited = new HashSet<Grid.Position>();
+        Grid.Position[,] Paths = new Grid.Position[tiles.GetLength(0), tiles.GetLength(1)];
+
+        Paths[myPosition.x, myPosition.y] = myPosition;
+        while (fila.Count > 0)
+        {                        
+            Grid.Position current = fila.Dequeue();
+
+            if (current.x == positionToFind.x && current.y == positionToFind.y)
+            {
+                path.Add(current);
+                Debug.Log("Acge");
+                while (current.x != myPosition.x || current.y!=myPosition.y)
                 {
-                    Debug.Log("Achei");
-                }      
-                else if (myPosition.x>width||myPosition.x<0||myPosition.y>heigth||myPosition.y<0)
-                { Debug.Log("END"); }
-                else
-                 {
-                  Search( new Grid.Position { x = myPosition.x + 1, y = myPosition.y }, positionToFind,width,heigth);
-                  Search( new Grid.Position { x = myPosition.x -1, y = myPosition.y }, positionToFind, width, heigth);
-                  Search( new Grid.Position { x = myPosition.x , y = myPosition.y +1}, positionToFind, width, heigth);
-                  Search( new Grid.Position { x = myPosition.x , y = myPosition.y -1 }, positionToFind, width, heigth);
-                }     
-                           
-                
-        }   
+                    current = Paths[current.x, current.y];
+                    path.Add(current);
+                }
+                path.Reverse();
+                break;
+            }
+           
+            else
+            {
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x + 1, y = current.y })
+                    && IsinTile(new Grid.Position { x = current.x + 1, y = current.y }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x + 1, y = current.y });
+                    PlacesVisited.Add(new Grid.Position { x = current.x + 1, y = current.y });
+                    Paths[current.x + 1, current.y] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x - 1, y = current.y })
+                    && IsinTile(new Grid.Position { x = current.x - 1, y = current.y }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x - 1, y = current.y });
+                    PlacesVisited.Add(new Grid.Position { x = current.x - 1, y = current.y });
+                    Paths[current.x - 1, current.y] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x, y = current.y + 1 })
+                    && IsinTile(new Grid.Position { x = current.x, y = current.y + 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x, y = current.y + 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x, y = current.y + 1 });
+                    Paths[current.x , current.y+1] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x, y = current.y - 1 })
+                    && IsinTile(new Grid.Position { x = current.x, y = current.y - 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x, y = current.y - 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x, y = current.y - 1 });
+                    Paths[current.x, current.y - 1] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x+1, y = current.y + 1 })
+                   && IsinTile(new Grid.Position { x = current.x+1, y = current.y + 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x+1, y = current.y + 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x+1, y = current.y + 1 });
+                    Paths[current.x+1, current.y + 1] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x - 1, y = current.y + 1 })
+                   && IsinTile(new Grid.Position { x = current.x - 1, y = current.y + 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x - 1, y = current.y + 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x - 1, y = current.y + 1 });
+                    Paths[current.x - 1, current.y + 1] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x + 1, y = current.y - 1 })
+                  && IsinTile(new Grid.Position { x = current.x + 1, y = current.y - 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x + 1, y = current.y - 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x + 1, y = current.y - 1 });
+                    Paths[current.x + 1, current.y - 1] = current;
+                }
+                if (!PlacesVisited.Contains(new Grid.Position { x = current.x - 1, y = current.y - 1 })
+                 && IsinTile(new Grid.Position { x = current.x - 1, y = current.y - 1 }, tiles))
+                {
+                    fila.Enqueue(new Grid.Position { x = current.x - 1, y = current.y - 1 });
+                    PlacesVisited.Add(new Grid.Position { x = current.x - 1, y = current.y - 1 });
+                    Paths[current.x - 1, current.y - 1] = current;
+                }
+
+
+            }
+
+        }
+        return path;
+    }
+    public static bool IsinTile(Grid.Position posi, Tile[,] tiles)
+    {
+        if (posi.x >= 0 && posi.x < tiles.GetLength(0) && posi.y >= 0 && posi.y < tiles.GetLength(1)&&!tiles[posi.x,posi.y].isWall)
+        {
+            return true;
+        }
+        else return false;
+    }
 }
+    
+       
+
+        
+        
