@@ -62,7 +62,7 @@ public static class PathFinder
             if (current.x == positionToFind.x && current.y == positionToFind.y)
             {
                 path.Add(current);
-                Debug.Log("Acge");
+            
                 while (current.x != myPosition.x || current.y!=myPosition.y)
                 {
                     current = Paths[current.x, current.y];
